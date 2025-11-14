@@ -83,7 +83,7 @@ if args.joinwifi:
     broadlink.setup(args.joinwifi[0], args.joinwifi[1], 4)
 
 if args.flmode:
-    dev.set_state(mode=args.flmode)
+    dev.set_state(mode_switch=args.flmode)
 if args.flon:
     dev.set_state(lightpwr=1)
 if args.floff:
@@ -93,7 +93,7 @@ if args.brightness:
 if args.ontime:
     dev.set_state(delay_time=args.ontime)
 if args.sensitivity:
-    dev.set_state(sensitivity=args.sensitivity)
+    dev.set_state(sensitivity_en=args.sensitivity)
 if args.brightnesscontrol:
     dev.set_state(brightness_control=args.brightnesscontrol)
 if args.getstate:

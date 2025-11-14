@@ -218,19 +218,33 @@ class fl1(lb1_base):
 
     TYPE = "FL1"
 
+    def fix_state(self, state: dict) -> dict:
+        """change state names that contain spaces """
+        if "Brightness control" in state:
+            state["brightness_control"] = state["Brightness control"]
+            del state["Brightness control"]
+        if "Delay time" in state:
+            state["delay_time"] = state["Delay time"]
+            del state["Delay time"]
+
+        return state
+
+    def get_state(self) -> dict:
+        return self.fix_state(super().get_state())
+
     def set_state(
         self,
-        mode: Optional[int] = None,
+        mode_switch: Optional[int] = None,
         lightpwr: Optional[bool] = None,
         brightness: Optional[int] = None,
         brightness_control: Optional[int] = None,
         delay_time: Optional[int] = None,
-        sensitivity: Optional[int] = None,
+        sensitivity_en: Optional[int] = None,
     ) -> dict:
         """Set the power state of the device."""
         state = {}
-        if mode is not None:
-            state["mode_switch"] = int(mode)
+        if mode_switch is not None:
+            state["mode_switch"] = int(mode_switch)
         if lightpwr is not None:
             state["lightpwr"] = int(bool(lightpwr))
             state["mode_switch"] = 5
@@ -240,10 +254,11 @@ class fl1(lb1_base):
             state["Brightness control"] = int(brightness_control)
         if delay_time is not None:
             state["Delay time"] = int(delay_time)
-        if sensitivity is not None:
-            state["sensitivity_en"] = int(sensitivity)
+        if sensitivity_en is not None:
+            state["sensitivity_en"] = int(sensitivity_en)
 
         packet = self._encode(2, state)
         response = self.send_packet(0x6A, packet)
         e.check_error(response[0x22:0x24])
-        return self._decode(response)
+
+        return self.fix_state(self._decode(response))
